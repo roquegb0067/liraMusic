@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+walkdir = "2.5"
 axum = "0.7"
 tokio = { version = "1.0", features = ["full"] }
 rusqlite = "0.31.0"
