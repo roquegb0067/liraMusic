@@ -1,7 +1,7 @@
 use walkdir::WalkDir;
 
 fn main() {
-    let caminho_inicial = ".";
+    let caminho_inicial = "/data/data/com.termux/files/home/storage/shared/snaptube/download/SnapTube Audio";
 
     for entrada in WalkDir::new(caminho_inicial) {
         match entrada {
