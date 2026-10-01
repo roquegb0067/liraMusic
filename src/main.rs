@@ -22,7 +22,7 @@ fn main() -> Result<()> {
     )?;
 
     // 3. Varre as pastas e coleta os arquivos de música
-    let pasta_musicas = "C:\\Users\\SeuUsuario\\Music"; // Altere para a sua pasta
+    let pasta_musicas = "/data/data/com.termux/files/home/storage/shared/snaptube/download/SnapTube Audio"; // Altere para a sua pasta
     println!("Varrendo pastas...");
     let musicas_encontradas = buscar_musicas(pasta_musicas);
     println!("Encontradas {} músicas.", musicas_encontradas.len());
