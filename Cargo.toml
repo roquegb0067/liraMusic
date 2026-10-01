@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 walkdir = "2.5"
+rusqlite = "0.31.0"
