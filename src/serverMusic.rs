@@ -15,7 +15,7 @@ struct Musica {
 type DbPool = Pool<SqliteConnectionManager>;
 
 #[tokio::main]
-async fn main() {
+pub async fn main() {
     // 1. Inicializa o pool de conexões do SQLite
     let manager = SqliteConnectionManager::file("musicas.db");
     let pool = Pool::new(manager).expect("Falha ao criar o pool de banco de dados");
