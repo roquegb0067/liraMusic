@@ -15,23 +15,20 @@ struct Musica {
 type DbPool = Pool<SqliteConnectionManager>;
 
 #[tokio::main]
-pub async fn main() {
-    // 1. Inicializa o pool de conexões do SQLite
+pub async fn iniciar() {
+    
     let manager = SqliteConnectionManager::file("musicas.db");
     let pool = Pool::new(manager).expect("Falha ao criar o pool de banco de dados");
 
-    // 2. Configura a permissão de CORS (importante para o fetch do JavaScript não ser bloqueado)
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods(Any);
 
-    // 3. Monta o app do Axum injetando o Pool como Estado global
     let app = Router::new()
         .route("/api/musicas", get(listar_musicas))
         .layer(cors)
         .with_state(pool);
 
-    // 4. Inicializa o servidor HTTP na porta 8080
     let listener = tokio::net::TcpListener::bind("127.0.0.1:8080").await.unwrap();
     println!("Servidor rodando em http://localhost:8080");
     axum::serve(listener, app).await.unwrap();

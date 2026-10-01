@@ -1,7 +1,9 @@
 use rusqlite::{params, Connection, Result};
 use std::env;
 use walkdir::WalkDir;
+mod server_music;
 
+#[tokio::main]
 #[derive(Debug)]
 struct Musica {
     caminho: String,
@@ -38,7 +40,8 @@ fn main() -> Result<()> {
         tx.commit()?;
         println!("Sincronização concluída com sucesso!");
     } else {
-        println!("Modo leitura ativado. Para atualizar o banco, use a: cargo run -- --sync");
+        println!("Modo leitura ativado. Para atualizar o banco, use a: cargo run -- --sync
+");
     }
 
     // 3. Lê e usa os dados do banco normalmente (funciona com ou sem --sync)
@@ -49,9 +52,10 @@ fn main() -> Result<()> {
         })
     })?;
 
-    for musica in musicas {
-        println!("Lendo do banco: {:?}", musica?.caminho);
-    }
+    println!("Iniciando a aplicação...");
+
+    // Chama a função assíncrona do servidor
+    server_music::iniciar().await;
 
     Ok(())
 }
