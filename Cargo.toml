@@ -11,4 +11,4 @@ rusqlite = "0.31.0"
 r2d2 = "0.8"
 r2d2_sqlite = "0.24"
 serde = { version = "1.0", features = ["derive"] }
-tower-http = { version = "0.5", features = ["cors"] } # Opcional: Resolve problemas de CORS se o JS rodar em outra porta
+tower-http = { version = "0.5", features = ["fs", "cors"] } 

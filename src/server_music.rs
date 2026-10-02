@@ -2,7 +2,10 @@ use axum::{extract::State, http::StatusCode, routing::get, Json, Router};
 use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
 use serde::Serialize;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::{
+    cors::{Any, CorsLayer},
+    services::ServeDir,
+};
 
 // Estrutura de dados que o Axum transformará automaticamente em JSON
 #[derive(Serialize)]

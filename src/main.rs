@@ -9,7 +9,7 @@ struct Musica {
     caminho: String,
 }
 #[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     let mut conn = Connection::open("musicas.db")?;
 
     // 1. MANTENHA AQUI: Garante que a tabela exista antes de qualquer leitura ou escrita
