@@ -1,6 +1,6 @@
 async function carregarMusicas() {
   try {
-    const resposta = await fetch('http://localhost:8080/api/musicas');
+    const resposta = await fetch('http://127.0.0.1:8080/api/musicas');
     
     if (!resposta.ok) {
       throw new Error(`Erro no servidor: ${resposta.status}`);
