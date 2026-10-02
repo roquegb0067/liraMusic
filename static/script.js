@@ -32,3 +32,4 @@ async function carregarMusicas() {
     document.getElementById('visor').innerHTML = `<p style="color: red;">Erro ao carregar músicas.</p>`;
   }
 }
+carregarMusicas()
