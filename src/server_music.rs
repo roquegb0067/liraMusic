@@ -28,6 +28,7 @@ pub async fn iniciar() {
         .route("/api/musicas", get(listar_musicas))
         .layer(cors)
         .with_state(pool);
+        .nest_service("/static", ServeDir::new("static"));
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:8080").await.unwrap();
     println!("Servidor rodando em http://localhost:8080");
