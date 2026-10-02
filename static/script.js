@@ -8,11 +8,11 @@ async function carregarMusicas() {
 
     // O JSON vira um array nativo de objetos JS
     const musicas = await resposta.json(); 
-    document.getElementById('visor').innerHTML=`Músicas recebidas do Rust: ${musicas};`
+   console.log(`Músicas recebidas do Rust: ${musicas}`)
 
     // Exemplo de renderização no console ou DOM
     musicas.forEach(musica => {
-      document.getElementById('visor').innerHTML=`[ID ${musica.id}] Caminho: ${musica.caminho}`;
+      document.getElementById('visor').innerHTML=`<p>[ID ${musica.id}] Caminho: ${musica.caminho}</p>`;
     });
   } catch (erro) {
     console.error("Falha ao buscar músicas:", erro);
