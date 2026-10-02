@@ -9,7 +9,7 @@ struct Musica {
     caminho: String,
 }
 #[tokio::main]
-fn main() -> Result<()> {
+async fn main() -> Result<()> {
     let mut conn = Connection::open("musicas.db")?;
 
     // 1. MANTENHA AQUI: Garante que a tabela exista antes de qualquer leitura ou escrita
@@ -46,11 +46,11 @@ fn main() -> Result<()> {
 
     // 3. Lê e usa os dados do banco normalmente (funciona com ou sem --sync)
     let mut stmt = conn.prepare("SELECT caminho FROM musicas")?;
-    let musicas = stmt.query_map([], |row| {
+    /*let musicas = stmt.query_map([], |row| {
         Ok(Musica {
             caminho: row.get(0)?,
         })
-    })?;
+    })?;*/
 
     println!("Iniciando a aplicação...");
 
