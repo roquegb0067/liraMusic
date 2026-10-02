@@ -3,13 +3,13 @@ use std::env;
 use walkdir::WalkDir;
 mod server_music;
 
-#[tokio::main]
+
 #[derive(Debug)]
 struct Musica {
     caminho: String,
 }
-
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
     let mut conn = Connection::open("musicas.db")?;
 
     // 1. MANTENHA AQUI: Garante que a tabela exista antes de qualquer leitura ou escrita
