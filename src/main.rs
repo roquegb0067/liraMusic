@@ -46,11 +46,6 @@ async fn main() -> Result<()> {
 
     // 3. Lê e usa os dados do banco normalmente (funciona com ou sem --sync)
     let mut stmt = conn.prepare("SELECT caminho FROM musicas")?;
-    /*let musicas = stmt.query_map([], |row| {
-        Ok(Musica {
-            caminho: row.get(0)?,
-        })
-    })?;*/
 
     println!("Iniciando a aplicação...");
 
