@@ -19,5 +19,3 @@ async function carregarMusicas() {
   }
 }
 
-// Executa a busca
-carregarMusicas();
