@@ -6,16 +6,22 @@ async function carregarMusicas() {
       throw new Error(`Erro no servidor: ${resposta.status}`);
     }
 
-    // O JSON vira um array nativo de objetos JS
     const musicas = await resposta.json(); 
-   console.log(`Músicas recebidas do Rust: ${musicas}`)
+    
+    // AJUSTE NO CONSOLE: Passar o array separado por vírgula permite que o console expanda o objeto Rust para você ver os detalhes
+    console.log("Músicas recebidas do Rust:", musicas);
 
-    // Exemplo de renderização no console ou DOM
+    // Limpa o visor antes de carregar a nova lista (evita duplicar se clicar duas vezes)
+    const visor = document.getElementById('visor');
+    visor.innerHTML = "";
+
+    // CORREÇÃO: Usar += para somar/acumular o HTML de cada música, em vez de substituir
     musicas.forEach(musica => {
-      document.getElementById('visor').innerHTML=`<p>[ID ${musica.id}] Caminho: ${musica.caminho}</p>`;
+      visor.innerHTML += `<p>[ID ${musica.id}] Caminho: ${musica.caminho}</p>`;
     });
+
   } catch (erro) {
     console.error("Falha ao buscar músicas:", erro);
+    document.getElementById('visor').innerHTML = `<p style="color: red;">Erro ao carregar músicas.</p>`;
   }
 }
-
