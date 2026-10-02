@@ -14,7 +14,7 @@ struct Musica {
 // Tipo customizado para facilitar o compartilhamento do banco com as rotas
 type DbPool = Pool<SqliteConnectionManager>;
 
-#[tokio::iniciar]
+
 pub async fn iniciar() {
     
     let manager = SqliteConnectionManager::file("musicas.db");
