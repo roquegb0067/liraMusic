@@ -12,7 +12,7 @@ async function carregarMusicas() {
     console.log("Músicas recebidas do Rust:", musicas);
     
     // Limpa o visor antes de carregar a nova lista (evita duplicar se clicar duas vezes)
-    const visor = document.getElementById('visor');
+    const visor = document.getElementById('listaMusicasVisor');
     visor.innerHTML = "";
     
     // CORREÇÃO: Usar += para somar/acumular o HTML de cada música, em vez de substituir
