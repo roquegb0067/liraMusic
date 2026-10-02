@@ -25,10 +25,14 @@ pub async fn iniciar() {
         .allow_methods(Any);
 
     let app = Router::new()
-        .route("/api/musicas", get(listar_musicas))
-        .layer(cors)
-        .with_state(pool);
-        .nest_service("/static", ServeDir::new("static"));
+    .route("/api/musicas", get(listar_musicas))
+    // 1. Adicione o serviço de arquivos estáticos primeiro
+    .nest_service("/static", ServeDir::new("static"))
+    // 2. Aplique as camadas (layers) que afetam todas as rotas acima
+    .layer(cors)
+    // 3. Feche com o estado por último
+    .with_state(pool); // O ponto e vírgula vai APENAS aqui no final
+
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:8080").await.unwrap();
     println!("Servidor rodando em http://localhost:8080");
