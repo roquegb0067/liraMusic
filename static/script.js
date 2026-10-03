@@ -22,7 +22,7 @@ async function carregarMusicas() {
     const nomeMusica = musica.caminho.split('/').pop();
 
       visor.innerHTML += `
-      <div onclick="reproduzir('${musica.caminho}')" class="cardMusica">
+      <div onclick="reproduzir({url: '${musica.caminho}', titulo: '${nomeMusica}', artista: 'Marino'})" class="cardMusica">
        <p class="tituloMusica">${nomeMusica}</p>
       </div>`;
     });
@@ -37,4 +37,3 @@ carregarMusicas()
 function salvarMusicasNoStorage(musicas) {
   localStorage.setItem('minhas_musicas', JSON.stringify(musicas));
 }
-
