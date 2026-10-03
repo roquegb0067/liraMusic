@@ -45,7 +45,6 @@ pub async fn iniciar() {
         // Rotas da API
         .route("/api/musicas", get(listar_musicas))
         .route("/api/musicas/stream", get(stream_audio))
-        .route("/api/capa", get(obter_capa_handler))
 
         // Arquivos estáticos
         .nest_service("/static", ServeDir::new("static"))
