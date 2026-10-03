@@ -1,25 +1,38 @@
-use axum::{extract::State, http::StatusCode, routing::get, Json, Router};
+use axum::{
+    body::Body,
+    extract::{Query, State},
+    http::{Request, StatusCode},
+    response::IntoResponse,
+    routing::get,
+    Json, Router,
+};
 use r2d2::Pool;
 use r2d2_sqlite::SqliteConnectionManager;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+use std::path::Path;
+use tower::ServiceExt;
 use tower_http::{
     cors::{Any, CorsLayer},
-    services::ServeDir,
+    services::{ServeDir, ServeFile},
 };
 
-// Estrutura de dados que o Axum transformará automaticamente em JSON
+// Estrutura de dados para retorno das músicas em JSON
 #[derive(Serialize)]
 struct Musica {
     id: i32,
     caminho: String,
 }
 
-// Tipo customizado para facilitar o compartilhamento do banco com as rotas
+// Estrutura para capturar a Query String (?path=...)
+#[derive(Deserialize)]
+struct StreamQuery {
+    path: String,
+}
+
+// Tipo customizado para o Pool do SQLite
 type DbPool = Pool<SqliteConnectionManager>;
 
-
 pub async fn iniciar() {
-    
     let manager = SqliteConnectionManager::file("musicas.db");
     let pool = Pool::new(manager).expect("Falha ao criar o pool de banco de dados");
 
@@ -28,30 +41,31 @@ pub async fn iniciar() {
         .allow_methods(Any);
 
     let app = Router::new()
-    .route("/api/musicas", get(listar_musicas))
-    // 1. Adicione o serviço de arquivos estáticos primeiro
-    .nest_service("/static", ServeDir::new("static"))
-    // 2. Aplique as camadas (layers) que afetam todas as rotas acima
-    .layer(cors)
-    // 3. Feche com o estado por último
-    .with_state(pool); // O ponto e vírgula vai APENAS aqui no final
+        // Rotas da API
+        .route("/api/musicas", get(listar_musicas))
+        .route("/api/musicas/stream", get(stream_audio))
+        // Arquivos estáticos
+        .nest_service("/static", ServeDir::new("static"))
+        // Middlewares / Camadas
+        .layer(cors)
+        .with_state(pool);
 
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:8080")
+        .await
+        .unwrap();
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:8080").await.unwrap();
     println!("Servidor rodando em http://localhost:8080");
     axum::serve(listener, app).await.unwrap();
 }
 
-// Handler da rota do Axum
+// Handler para listar todas as músicas
 async fn listar_musicas(
     State(pool): State<DbPool>,
 ) -> Result<Json<Vec<Musica>>, (StatusCode, String)> {
-    // Adquire uma conexão disponível do Pool
-    let conn = pool.get().map_err(|e| {
-        (StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-    })?;
+    let conn = pool
+        .get()
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
-    // Busca os registros no banco de dados SQLite
     let mut stmt = conn
         .prepare("SELECT id, caminho FROM musicas")
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
@@ -72,6 +86,30 @@ async fn listar_musicas(
         }
     }
 
-    // Retorna o vetor dentro do tipo Json do Axum (Gera status 200 OK e Content-Type: application/json)
     Ok(Json(musicas))
+}
+
+// Handler para fazer o streaming do arquivo de áudio
+async fn stream_audio(
+    Query(query): Query<StreamQuery>,
+    req: Request<Body>,
+) -> impl IntoResponse {
+    let file_path = Path::new(&query.path);
+
+    // Verifica se o arquivo físico existe no disco
+    if !file_path.exists() {
+        return (StatusCode::NOT_FOUND, "Arquivo de áudio não encontrado").into_response();
+    }
+
+    // ServeFile gerencia requisições parciais (Range), Content-Type e chunking
+    let service = ServeFile::new(file_path);
+
+    match service.oneshot(req).await {
+        Ok(response) => response.into_response(),
+        Err(err) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Erro ao ler o arquivo: {}", err),
+        )
+            .into_response(),
+    }
 }

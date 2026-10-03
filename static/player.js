@@ -81,15 +81,16 @@ function extrairNomeMusica(caminho) {
   return caminho.split('/').pop();
 }
 
-// Trocar de faixa e atualizar interface
-function reproduzir(caminho) {
-  if (!caminho) return;
+function reproduzir(musica) {
+  if (!musica || !musica.caminho) return;
 
-  audio.src = caminho;
-  
-  // Extrair e atualizar o nome da música no player
-  const nomeMusica = extrairNomeMusica(caminho);
-  if (elemTitulo) elemTitulo.textContent = nomeMusica;
+  const nome = musica.caminho.split('/').pop();
+  const url = `http://127.0.0.1:8080/api/musicas/stream?path=${encodeURIComponent(musica.caminho)}`;
 
+  const titulo = document.getElementById('player-titulo');
+  if (titulo) titulo.textContent = nome;
+
+  const audio = document.getElementById('meu-audio');
+  audio.src = url;
   audio.play().catch(err => console.error('Erro ao reproduzir o áudio:', err));
 }

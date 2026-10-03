@@ -17,15 +17,15 @@ async function carregarMusicas() {
 
     // CORREÇÃO: Usar += para somar/acumular o HTML de cada música, em vez de substituir
 
-    musicas.forEach(musica => {
-  // Divide o caminho por barras e pega o último elemento (o nome da música)
-    const nomeMusica = musica.caminho.split('/').pop();
+musicas.forEach(musica => {
+  const nomeMusica = musica.caminho.split('/').pop();
 
-      visor.innerHTML += `
-      <div onclick="reproduzir('${musica.caminho}')" class="cardMusica">
-       <p class="tituloMusica">${nomeMusica}</p>
-      </div>`;
-    });
+  visor.innerHTML += `
+    <div onclick="reproduzir(${JSON.stringify(musica)})" class="cardMusica">
+      <p class="tituloMusica">${nomeMusica}</p>
+    </div>
+  `;
+});
 
   } catch (erro) {
     console.error("Falha ao buscar músicas:", erro);
