@@ -76,19 +76,20 @@ function obterMusicasDoStorage() {
   return dados ? JSON.parse(dados) : [];
 }
 
+// Extrair nome da música do caminho completo
+function extrairNomeMusica(caminho) {
+  return caminho.split('/').pop();
+}
+
 // Trocar de faixa e atualizar interface
-function reproduzir(musica) {
-  // Aceita tanto objeto { url, titulo, artista } quanto string de URL
-  const url = typeof musica === 'object' ? musica.url : musica;
+function reproduzir(caminho) {
+  if (!caminho) return;
+
+  audio.src = caminho;
   
-  if (!url) return;
-
-  audio.src = url;
-
-  if (typeof musica === 'object') {
-    if (musica.titulo && elemTitulo) elemTitulo.textContent = musica.titulo;
-    if (musica.artista && elemArtista) elemArtista.textContent = musica.artista;
-  }
+  // Extrair e atualizar o nome da música no player
+  const nomeMusica = extrairNomeMusica(caminho);
+  if (elemTitulo) elemTitulo.textContent = nomeMusica;
 
   audio.play().catch(err => console.error('Erro ao reproduzir o áudio:', err));
 }
