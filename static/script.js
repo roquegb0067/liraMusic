@@ -22,7 +22,7 @@ async function carregarMusicas() {
     const nomeMusica = musica.caminho.split('/').pop();
 
       visor.innerHTML += `
-      <div onclick="passarAudioReproducao('${musica.caminho}')" class="cardMusica">
+      <div onclick="reproduzir('${musica.caminho}')" class="cardMusica">
        <p class="tituloMusica">${nomeMusica}</p>
       </div>`;
     });
