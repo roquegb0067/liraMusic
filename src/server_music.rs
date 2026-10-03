@@ -15,6 +15,9 @@ use tower_http::{
     cors::{Any, CorsLayer},
     services::{ServeDir, ServeFile},
 };
+use lofty::file::AudioFile;
+use lofty::probe::Probe;
+use lofty::tag::TaggedFileExt;
 
 // Estrutura de dados para retorno das músicas em JSON
 #[derive(Serialize)]
@@ -112,4 +115,52 @@ async fn stream_audio(
         )
             .into_response(),
     }
+}
+
+
+
+#[derive(Deserialize)]
+pub struct CapaQuery {
+    pub caminho: String,
+}
+
+// Handler da rota
+pub async fn obter_capa_handler(
+    Query(query): Query<CapaQuery>,
+) -> impl IntoResponse {
+    let caminho = query.caminho;
+
+    // Processa o processamento/leitura I/O fora da thread principal do Tokio
+    let resultado = tokio::task::spawn_blocking(move || {
+        extrair_capa_por_caminho(caminho)
+    })
+    .await;
+
+    match resultado {
+        Ok(Some((bytes, mime_type))) => (
+            StatusCode::OK,
+            [
+                (header::CONTENT_TYPE, mime_type),
+                (header::CACHE_CONTROL, "public, max-age=86400".to_string()),
+            ],
+            bytes,
+        )
+            .into_response(),
+        _ => (StatusCode::NOT_FOUND, "Capa não encontrada").into_response(),
+    }
+}
+
+// Função auxiliar com a crate Lofty
+fn extrair_capa_por_caminho<P: AsRef<Path>>(caminho: P) -> Option<(Vec<u8>, String)> {
+    let tagged_file = Probe::open(caminho).ok()?.read().ok()?;
+    let tag = tagged_file.primary_tag().or_else(|| tagged_file.first_tag())?;
+    let picture = tag.pictures().first()?;
+
+    let mime_type = picture
+        .mime_type()
+        .map(|m| m.as_str())
+        .unwrap_or("image/jpeg")
+        .to_string();
+
+    Some((picture.data().to_vec(), mime_type))
 }
