@@ -7,74 +7,88 @@ const barraBg = document.getElementById('barra-progresso-bg');
 const tempoAtual = document.getElementById('tempo-atual');
 const tempoTotal = document.getElementById('tempo-total');
 const sliderVolume = document.getElementById('slider-volume');
+const btnLike = document.getElementById('btn-like');
+const elemTitulo = document.getElementById('player-titulo');
+const elemArtista = document.getElementById('player-artista');
 
 // Formatar segundos em formato MM:SS
 function formatarTempo(segundos) {
+  if (isNaN(segundos) || !isFinite(segundos)) return '0:00';
   const min = Math.floor(segundos / 60);
   const seg = Math.floor(segundos % 60);
   return `${min}:${seg < 10 ? '0' : ''}${seg}`;
 }
 
-// Dar Play ou Pause
+// Atualizar exibição dos ícones
+function atualizarIcones(estaTocando) {
+  iconePlay.style.display = estaTocando ? 'none' : 'block';
+  iconePause.style.display = estaTocando ? 'block' : 'none';
+}
+
+// Alternar entre Play e Pause
 btnPlayPause.addEventListener('click', () => {
+  if (!audio.src) return; // Não faz nada se não houver música carregada
   if (audio.paused) {
     audio.play();
-    iconePlay.style.display = 'none';
-    iconePause.style.display = 'block';
   } else {
     audio.pause();
-    iconePlay.style.display = 'block';
-    iconePause.style.display = 'none';
   }
 });
 
-// Atualizar barra de carregamento e cronômetro
+// Sincronizar ícones com o estado do áudio
+audio.addEventListener('play', () => atualizarIcones(true));
+audio.addEventListener('pause', () => atualizarIcones(false));
+
+// Atualizar barra de progresso e tempo decorrido
 audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
   const porcentagem = (audio.currentTime / audio.duration) * 100;
   barraFill.style.width = `${porcentagem}%`;
   tempoAtual.textContent = formatarTempo(audio.currentTime);
 });
 
-// Carregar tempo total da música assim que o arquivo carregar
+// Carregar duração total do áudio
 audio.addEventListener('loadedmetadata', () => {
   tempoTotal.textContent = formatarTempo(audio.duration);
 });
 
-// Permitir clicar na barra para avançar ou voltar a música
+// Clique na barra para avançar/voltar
 barraBg.addEventListener('click', (e) => {
+  if (!audio.duration) return;
   const larguraTotal = barraBg.clientWidth;
   const cliqueX = e.offsetX;
-  const duracao = audio.duration;
-  audio.currentTime = (cliqueX / larguraTotal) * duracao;
+  audio.currentTime = (cliqueX / larguraTotal) * audio.duration;
 });
 
-// Controlar Volume
+// Controle de Volume
 sliderVolume.addEventListener('input', (e) => {
   audio.volume = e.target.value;
 });
-// Adicione essa parte no final do script que você já tinha:
-const btnLike = document.getElementById('btn-like');
 
+// Botão Curtir
 btnLike.addEventListener('click', () => {
   btnLike.classList.toggle('liked');
 });
-// Recuperar a lista do localStorage (retorna array vazio se não existir)
+
+// Obter lista do localStorage
 function obterMusicasDoStorage() {
   const dados = localStorage.getItem('minhas_musicas');
   return dados ? JSON.parse(dados) : [];
 }
-function passarAudioReproducao(audio_clicado) {
 
-}
-function reproduzir(audio_play_autual) {
-  document.getElementById('rep_audio').innerHTML=`<audio id="meu-audio" src="${audio_play_autual}"></audio>`
-  if (audio.paused) {
-    audio.play();
-    iconePlay.style.display = 'none';
-    iconePause.style.display = 'block';
-  } else {
-    audio.pause();
-    iconePlay.style.display = 'block';
-    iconePause.style.display = 'none';
+// Trocar de faixa e atualizar interface
+function reproduzir(musica) {
+  // Aceita tanto objeto { url, titulo, artista } quanto string de URL
+  const url = typeof musica === 'object' ? musica.url : musica;
+  
+  if (!url) return;
+
+  audio.src = url;
+
+  if (typeof musica === 'object') {
+    if (musica.titulo && elemTitulo) elemTitulo.textContent = musica.titulo;
+    if (musica.artista && elemArtista) elemArtista.textContent = musica.artista;
   }
+
+  audio.play().catch(err => console.error('Erro ao reproduzir o áudio:', err));
 }
