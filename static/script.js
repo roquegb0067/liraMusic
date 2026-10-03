@@ -12,7 +12,7 @@ async function carregarMusicas() {
     const visor = document.getElementById('listaMusicasVisor');
     visor.innerHTML = "";
 
-    musicas.forEach(musica => {
+    [...musicas].reverse().forEach(musica => {
       const nomeMusica = musica.caminho.split('/').pop();
 
       const card = document.createElement('div');
