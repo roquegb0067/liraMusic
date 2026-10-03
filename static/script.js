@@ -7,33 +7,34 @@ async function carregarMusicas() {
     }
 
     const musicas = await resposta.json();
-
-    // AJUSTE NO CONSOLE: Passar o array separado por vírgula permite que o console expanda o objeto Rust para você ver os detalhes
     salvarMusicasNoStorage(musicas)
 
-    // Limpa o visor antes de carregar a nova lista (evita duplicar se clicar duas vezes)
     const visor = document.getElementById('listaMusicasVisor');
     visor.innerHTML = "";
 
-    // CORREÇÃO: Usar += para somar/acumular o HTML de cada música, em vez de substituir
+    musicas.forEach(musica => {
+      const nomeMusica = musica.caminho.split('/').pop();
 
-musicas.forEach(musica => {
-  const nomeMusica = musica.caminho.split('/').pop();
-
-  visor.innerHTML += `
-    <div onclick="reproduzir(${JSON.stringify(musica)})" class="cardMusica">
-      <p class="tituloMusica">${nomeMusica}</p>
-    </div>
-  `;
-});
+      const card = document.createElement('div');
+      card.className = 'cardMusica';
+      card.innerHTML = `<p class="tituloMusica">${nomeMusica}</p>`;
+      
+      // Usar addEventListener em vez de onclick inline
+      card.addEventListener('click', () => {
+        reproduzir(musica.caminho);
+      });
+      
+      visor.appendChild(card);
+    });
 
   } catch (erro) {
     console.error("Falha ao buscar músicas:", erro);
-    document.getElementById('visor').innerHTML = `<p style="color: red;">Erro ao carregar músicas.</p>`;
+    document.getElementById('listaMusicasVisor').innerHTML = `<p style="color: red;">Erro ao carregar músicas.</p>`;
   }
 }
-carregarMusicas()
-// Salva a lista de músicas no localStorage
+
+carregarMusicas();
+
 function salvarMusicasNoStorage(musicas) {
   localStorage.setItem('minhas_musicas', JSON.stringify(musicas));
 }

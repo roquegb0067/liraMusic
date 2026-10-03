@@ -81,16 +81,22 @@ function extrairNomeMusica(caminho) {
   return caminho.split('/').pop();
 }
 
-function reproduzir(musica) {
-  if (!musica || !musica.caminho) return;
+function reproduzir(caminho) {
+  if (!caminho) {
+    console.error('Caminho da música não fornecido');
+    return;
+  }
 
-  const nome = musica.caminho.split('/').pop();
-  const url = `http://127.0.0.1:8080/api/musicas/stream?path=${encodeURIComponent(musica.caminho)}`;
+  // URL para o streaming via API
+  const url = `http://127.0.0.1:8080/api/musicas/stream?path=${encodeURIComponent(caminho)}`;
+  
+  const nomeMusica = caminho.split('/').pop();
+  const elemTitulo = document.getElementById('player-titulo');
+  
+  if (elemTitulo) {
+    elemTitulo.textContent = nomeMusica;
+  }
 
-  const titulo = document.getElementById('player-titulo');
-  if (titulo) titulo.textContent = nome;
-
-  const audio = document.getElementById('meu-audio');
   audio.src = url;
   audio.play().catch(err => console.error('Erro ao reproduzir o áudio:', err));
 }
