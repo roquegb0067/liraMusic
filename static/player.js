@@ -58,3 +58,14 @@ const btnLike = document.getElementById('btn-like');
 btnLike.addEventListener('click', () => {
   btnLike.classList.toggle('liked');
 });
+// Recuperar a lista do localStorage (retorna array vazio se não existir)
+function obterMusicasDoStorage() {
+  const dados = localStorage.getItem('minhas_musicas');
+  return dados ? JSON.parse(dados) : [];
+}
+function passarAudioReproducao(audio_clicado) {
+
+}
+function reproduzir(audio_play_autual) {
+  document.getElementById('rep_audio').innerHTML=`<audio id="meu-audio" src="${audio_play_autual}"></audio>`
+}

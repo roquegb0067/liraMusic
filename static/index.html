@@ -20,36 +20,25 @@
 </div>
 
   <div id="rodapeReproducao">
-
-
-<!-- Container onde as músicas do backend (Rust) serão renderizadas -->
-<main class="container-principal">
-  <h2>Sua Biblioteca</h2>
-  <div id="listaMusicasVisor" class="lista-musicas">
-    <!-- Os cards de música serão gerados aqui dinamicamente pelo JavaScript -->
-    <p style="color: #b3b3b3;">Carregando músicas...</p>
-  </div>
-</main>
-
-<!-- Player Fixo no Rodapé -->
 <footer class="custom-player">
-  <!-- Tag de áudio (o 'src' é inserido dinamicamente ao clicar em uma música) -->
-  <audio id="meu-audio"></audio>
+  <div id="rep_audio"></div>
 
-  <!-- Lado Esquerdo: Info + Botão de Curtir -->
+
+  <!-- Lado Esquerdo: Info + Botão de Curtir juntos -->
   <div class="player-info-container">
     <div class="linha-topo-info">
-      <strong class="player-titulo">Selecione uma música</strong>
+      <strong class="player-titulo">I'm Sorry Mom</strong>
+      <!-- Botão Curtir (Coração) -->
       <button id="btn-like" class="btn-like" aria-label="Curtir">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
       </button>
     </div>
-    <span class="player-artista">---</span>
+    <span class="player-artista">Marino</span>
   </div>
 
-  <!-- Centro: Play/Pause + Barra de Progresso Interativa -->
+  <!-- Centro: Botão Play/Pause e Barra de Progresso LADO A LADO -->
   <div class="player-centro-compacto">
     <button id="btn-play-pause" class="btn-control play">
       <svg id="icone-play" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -58,17 +47,17 @@
 
     <div class="progresso-container">
       <span id="tempo-atual" class="tempo">0:00</span>
-      <div id="barra-progresso-bg" class="barra-bg" style="cursor: pointer;">
-        <div id="barra-progresso-fill" class="barra-fill" style="width: 0%;"></div>
+      <div id="barra-progresso-bg" class="barra-bg">
+        <div id="barra-progresso-fill" class="barra-fill"></div>
       </div>
       <span id="tempo-total" class="tempo">0:00</span>
     </div>
   </div>
 
-  <!-- Lado Direito: Controle de Volume -->
+  <!-- Lado Direito: Controle de Volume Discreto -->
   <div class="player-volume">
     <svg viewBox="0 0 24 24" width="16" height="16" fill="#b3b3b3"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-    <input type="range" id="slider-volume" min="0" max="1" step="0.05" value="1" class="volume-slider">
+    <input type="range" id="slider-volume" min="0" max="1" step="0.1" value="1" class="volume-slider">
   </div>
 </footer>
 
