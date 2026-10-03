@@ -44,9 +44,7 @@ async fn main() -> Result<()> {
 ");
     }
 
-    // 3. Lê e usa os dados do banco normalmente (funciona com ou sem --sync)
-    let mut stmt = conn.prepare("SELECT caminho FROM musicas")?;
-
+    // 3. Inicia a aplicação/servidor
     println!("Iniciando a aplicação...");
 
     // Chama a função assíncrona do servidor
