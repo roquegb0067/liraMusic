@@ -38,3 +38,18 @@ carregarMusicas();
 function salvarMusicasNoStorage(musicas) {
   localStorage.setItem('minhas_musicas', JSON.stringify(musicas));
 }
+// Seleciona todos os botões de navegação do cabeçalho
+const botoesNav = document.querySelectorAll('#cabecalho .btn-nav');
+
+botoesNav.forEach(botao => {
+  botao.addEventListener('click', () => {
+    // 1. Procura o botão que está ativo no momento e remove a classe 'ativo' dele
+    const botaoAtivoAtual = document.querySelector('#cabecalho .btn-nav.ativo');
+    if (botaoAtivoAtual) {
+      botaoAtivoAtual.classList.remove('ativo');
+    }
+    
+    // 2. Adiciona a classe 'ativo' (cor branca) apenas no botão que você acabou de clicar
+    botao.classList.add('ativo');
+  });
+});
