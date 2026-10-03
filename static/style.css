@@ -28,7 +28,7 @@ body{
   border-bottom: 1px solid #222;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  position: fixed;
+  position: relative;
 }
 
 /* Estilo geral dos botões de navegação */
@@ -83,4 +83,7 @@ body{
   .btn-nav.btn-menu {
     margin-left: 0; 
   }
+}
+#listaMusicasVisor{
+  margin-top: 16px;
 }

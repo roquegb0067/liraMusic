@@ -6,67 +6,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/static/player.css">
-  <title></title>
+  <title>LiraMusic</title>
 </head>
 
 <body>
-  <div id="listaMusicasVisor"></div>
-  <div id="cabecalho">
+    <div id="cabecalho">
     <button type="button" class="btn-nav ativo">Músicas</button>
     <button type="button" class="btn-nav">Playlists</button>
     <button type="button" class="btn-nav">Curtidos</button>
     <button type="button" class="btn-nav">Novas Playlists</button>
     <button type="button" class="btn-nav btn-menu">Menu</button>
   </div>
-  
-  
+  <div id="listaMusicasVisor"></div>
+
   <audio id="meu-audio"></audio>
-  
-  
-  
-  
-  
-  <div id="rodapeReproducao">
-    <!--<footer class="custom-player">
-  <div id="rep_audio"></div>
-
-
-
-  <div class="player-info-container">
-    <div class="linha-topo-info">
-      <strong class="player-titulo">I'm Sorry Mom</strong>
-
-      <button id="btn-like" class="btn-like" aria-label="Curtir">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-      </button>
-    </div>
-    <span class="player-artista">Marino</span>
-  </div>
-
-
-  <div class="player-centro-compacto">
-    <button id="btn-play-pause" class="btn-control play">
-      <svg id="icone-play" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-      <svg id="icone-pause" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-    </button>
-
-    <div class="progresso-container">
-      <span id="tempo-atual" class="tempo">0:00</span>
-      <div id="barra-progresso-bg" class="barra-bg">
-        <div id="barra-progresso-fill" class="barra-fill"></div>
-      </div>
-      <span id="tempo-total" class="tempo">0:00</span>
-    </div>
-  </div>
-
-
-  <div class="player-volume">
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="#b3b3b3"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-    <input type="range" id="slider-volume" min="0" max="1" step="0.1" value="1" class="volume-slider">
-  </div>
-</footer>-->
+    <div id="rodapeReproducao">
     <footer class="custom-player">
       
       <!-- Lado Esquerdo: Info + Botão de Curtir -->
