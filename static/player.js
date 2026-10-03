@@ -90,6 +90,10 @@ function reproduzir(caminho) {
   // URL para o streaming via API
   const url = `http://127.0.0.1:8080/api/musicas/stream?path=${encodeURIComponent(caminho)}`;
   // Exemplo no Frontend (encodeURIComponent evita problemas com barras e espaços no caminho)
+const urlCapa = `/api/capa?caminho=${encodeURIComponent(cam)}`;
+
+// Usando diretamente em uma tag <img>:
+document.querySelector("#capa-img").src = urlCapa;
 
   const nomeMusica = caminho.split('/').pop();
   const elemTitulo = document.getElementById('player-titulo');
