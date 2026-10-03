@@ -68,4 +68,13 @@ function passarAudioReproducao(audio_clicado) {
 }
 function reproduzir(audio_play_autual) {
   document.getElementById('rep_audio').innerHTML=`<audio id="meu-audio" src="${audio_play_autual}"></audio>`
+  if (audio.paused) {
+    audio.play();
+    iconePlay.style.display = 'none';
+    iconePause.style.display = 'block';
+  } else {
+    audio.pause();
+    iconePlay.style.display = 'block';
+    iconePause.style.display = 'none';
+  }
 }
