@@ -51,12 +51,14 @@ function atualizarIcones(estaTocando) {
 // ==========================================
 // REPRODUÇÃO E INJEÇÃO DINÂMICA DE DADOS
 // ==========================================
-function reproduzir(caminho, artista = "Desconhecido", urlCapa = null) {
+let artista = "LiraMusic";
+let urlCapa = '/MVP/static/Screenshot_20261001_233241_Instagram.jpg'
+function reproduzir(caminho, artista, urlCapa) {
   if (!caminho) {
     console.error('Caminho da música não fornecido');
     return;
   }
-
+  console.log(caminho)
   // URL para streaming via API
   const urlStream = `http://127.0.0.1:8080/api/musicas/stream?path=${encodeURIComponent(caminho)}`;
   const nomeMusica = extrairNomeMusica(caminho);
@@ -206,4 +208,40 @@ if (dialog) {
     );
     if (!isInDialog) fecharModal();
   });
+}
+
+/*
+AVANÇAR E RETORNAR MÚSICA
+*/
+const playlist = JSON.parse(localStorage.getItem('minhas_musicas'));
+
+// 2. Variável para controlar a posição atual (começa na primeira música, índice 0)
+let indiceAtual = 0;
+
+// 3. Função para tocar/exibir a música atual
+function atualizarMusica() {
+  const musicaAtual = playlist[indiceAtual];
+  //let caminho = musicaAtual.caminho;
+  reproduzir(musicaAtual.caminho, artista, urlCapa);
+  console.log(`Caminho: ${musicaAtual.caminho}`);
+}
+
+// 4. Função para ir para a PRÓXIMA (+1)
+function proximaMusica() {
+  if (indiceAtual < playlist.length - 1) {
+    indiceAtual++; // Avança um índice
+  } else {
+    indiceAtual = 0; // Se for a última, volta para a primeira (loop)
+  }
+  atualizarMusica();
+}
+
+// 5. Função para VOLTAR para a anterior (-1)
+function musicaAnterior() {
+  if (indiceAtual > 0) {
+    indiceAtual--; // Volta um índice
+  } else {
+    indiceAtual = playlist.length - 1; // Se for a primeira, vai para a última
+  }
+  atualizarMusica();
 }

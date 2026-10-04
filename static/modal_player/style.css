@@ -60,6 +60,7 @@ body {
   align-items: center;
   position: relative;
   box-sizing: border-box;
+  z-index: 1111;
 }
 
 .btn-fechar {
@@ -112,27 +113,45 @@ body {
   display: block;
 }
 
-/* Título e Artista */
+/* Container pai */
 .modal-info-row {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  position: relative; /* Serve de referência para o botão */
   margin-bottom: 20px;
+  box-sizing: border-box;
+  padding-right: 44px; /* Reserva o espaço do botão para o texto não passar por cima dele */
 }
 
+/* Título */
 .modal-info-row #player-titulo {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 300;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  width: 100%; /* Ocupa 100% da área útil do container */
 }
 
+/* Artista */
 .modal-info-row .player-artista {
   font-size: 14px;
   color: var(--text-sub);
   margin-top: 4px;
   display: block;
 }
+
+/* O Botão - Removido do fluxo (não participa do layout) */
+.modal-info-row button,
+.modal-info-row .seu-btn-aqui { 
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%); /* Centraliza verticalmente alinhado ao bloco */
+  z-index: 2;
+}
+
 
 /* Progresso no Modal */
 /* ----------------------------------
@@ -148,12 +167,14 @@ body {
 .modal-progresso .barra-bg {
   width: 100%;
   height: 6px;
-  background-color: rgba(255, 255, 255, 0.25); /* Contraste aumentado para ficar bem visível */
+  background-color: rgba(255, 255, 255, 0.25);
+  /* Contraste aumentado para ficar bem visível */
   border-radius: 3px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  flex: none; /* Impede que o flexbox deforme a altura da barra no layout vertical */
+  flex: none;
+  /* Impede que o flexbox deforme a altura da barra no layout vertical */
 }
 
 .modal-progresso .barra-fill {
@@ -258,9 +279,12 @@ body {
 .player-artista {
   color: var(--text-sub);
   font-size: 12px;
+  
 }
 
 .btn-like {
+  flex-shrink: 0;
+  position: fixed;
   background: none;
   border: none;
   color: var(--text-sub);
@@ -269,6 +293,7 @@ body {
   display: flex;
   align-items: center;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .btn-like:hover {
@@ -369,10 +394,19 @@ body {
 }
 
 @media (max-width: 600px) {
-  .player-volume { display: none; }
-  .player-info-container { width: 40%; }
-  .player-centro-compacto { width: 60%; }
+  .player-volume {
+    display: none;
+  }
+  
+  .player-info-container {
+    width: 40%;
+  }
+  
+  .player-centro-compacto {
+    width: 60%;
+  }
 }
+
 /* Feedback visual no rodapé para indicar que é arrastável */
 .custom-player {
   cursor: grab;
