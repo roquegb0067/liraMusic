@@ -216,8 +216,14 @@ AVANÇAR E RETORNAR MÚSICA
 const playlist = JSON.parse(localStorage.getItem('minhas_musicas'));
 
 // 2. Variável para controlar a posição atual (começa na primeira música, índice 0)
+//Controle da reprodução pela variável
+//#######№############################
 let indiceAtual = 0;
 
+
+function MusicaAtual(musicaTocando) {
+  indiceAtual = musicaTocando;
+}
 // 3. Função para tocar/exibir a música atual
 function atualizarMusica() {
   const musicaAtual = playlist[indiceAtual];
@@ -245,3 +251,7 @@ function musicaAnterior() {
   }
   atualizarMusica();
 }
+// Detecta quando a música atual termina
+audio.addEventListener('ended', () => {
+    musicaAnterior();
+});
