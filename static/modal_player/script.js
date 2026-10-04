@@ -54,12 +54,12 @@ function atualizarIcones(estaTocando) {
 let artista = "LiraMusic";
 let urlCapa = '/MVP/static/Screenshot_20261001_233241_Instagram.jpg'
 
-function reproduzir(caminho, artista, urlCapa) {
+async function reproduzir(caminho, artista, urlCapa) {
   if (!caminho) {
     console.error('Caminho da música não fornecido');
     return;
   }
-  console.log(caminho)
+  
   // URL para streaming via API
   const urlStream = `http://127.0.0.1:8080/api/musicas/stream?path=${encodeURIComponent(caminho)}`;
   const nomeMusica = extrairNomeMusica(caminho);
@@ -74,8 +74,16 @@ function reproduzir(caminho, artista, urlCapa) {
   }
   
   audio.src = urlStream;
-  audio.play().catch(err => console.error('Erro ao reproduzir o áudio:', err));
+
+  try {
+    await audio.play();
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      console.error('Erro ao reproduzir o áudio:', err);
+    }
+  }
 }
+
 
 // =========================================
 // CONTROLE DE ÁUDIO E SINCRONIZAÇÃO
@@ -223,33 +231,43 @@ let indiceAtual = 0;
 
 
 function MusicaAtual(musicaTocando) {
-  indiceAtual = musicaTocando;
+  // Convertemos para número e subtraímos 1 para alinhar com o array (0-index)
+  indiceAtual = Number(musicaTocando) - 1;
   atualizarMusica();
 }
+
 // 3. Função para tocar/exibir a música atual
 function atualizarMusica() {
   const musicaAtual = playlist[indiceAtual];
   //let caminho = musicaAtual.caminho;
   reproduzir(musicaAtual.caminho, artista, urlCapa);
-  console.log(`Caminho: ${musicaAtual.caminho}`);
+  
 }
 
 // 4. Função para ir para a PRÓXIMA (+1)
 function proximaMusica() {
-  if (indiceAtual < playlist.length - 1) {
-    indiceAtual++; // Avança um índice
+  if (!modoAleatorio) {
+    if (indiceAtual < playlist.length - 1) {
+      indiceAtual++; // Avança um índice
+    } else {
+      indiceAtual = 0; // Se for a última, volta para a primeira (loop)
+    }
   } else {
-    indiceAtual = 0; // Se for a última, volta para a primeira (loop)
+    Aleatorio()
   }
   atualizarMusica();
 }
 
 // 5. Função para VOLTAR para a anterior (-1)
 function musicaAnterior() {
-  if (indiceAtual > 0) {
-    indiceAtual--; // Volta um índice
+  if (!modoAleatorio) {
+    if (indiceAtual > 0) {
+      indiceAtual--; // Volta um índice
+    } else {
+      indiceAtual = playlist.length - 1; // Se for a primeira, vai para a última
+    }
   } else {
-    indiceAtual = playlist.length - 1; // Se for a primeira, vai para a última
+    Aleatorio()
   }
   atualizarMusica();
 }
@@ -269,11 +287,11 @@ function Aleatorio() {
   do {
     novoIndice = Math.floor(Math.random() * playlist.length);
   } while (novoIndice === indiceAtual);
-  console.log(novoIndice);
   indiceAtual = novoIndice;
   modoAleatorio = true;
   atualizarMusica();
 }
+
 function repetir() {
   modoAleatorio = false;
 }
