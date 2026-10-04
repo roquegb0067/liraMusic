@@ -1,0 +1,91 @@
+body{
+  background: black;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 90px;
+  margin-top: 2px;
+}
+.cardMusica{
+  border: 1px solid #ff007f;
+  box-shadow: 0px 0px 5px 2px #4a00e0;
+  border-radius: 50px;
+  padding: 5px;
+  background-color: black;
+  margin-top: 15px;
+}
+.tituloMusica{
+  color: white;
+  font-size: 10px;
+}
+/* Container principal do cabeçalho */
+#cabecalho {
+  width: 100%;
+  background-color: #121212; /* Fundo escuro combinando com o player */
+  padding: 15px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Espaço entre os botões */
+  border-bottom: 1px solid #222;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  top: 0px;
+  position: fixed;
+}
+
+/* Estilo geral dos botões de navegação */
+.btn-nav {
+  background-color: #242424; /* Fundo cinza escuro discreto */
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 20px; /* Cantos bem arredondados estilo pílula */
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+/* Efeito ao passar o mouse por cima */
+.btn-nav:hover {
+  background-color: #2a2a2a;
+  transform: scale(1.03);
+}
+
+/* Estado ativo (para destacar em qual página o usuário está) */
+.btn-nav.ativo {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Botão de Menu isolado no canto direito */
+.btn-nav.btn-menu {
+  margin-left: auto; /* Empurra o botão Menu totalmente para a direita */
+  background-color: transparent;
+  border: 1px solid #727272;
+  color: #a7a7a7;
+}
+
+.btn-nav.btn-menu:hover {
+  border-color: #fff;
+  color: #fff;
+  background-color: transparent;
+}
+
+/* Responsividade para celulares (permite rolar os botões de lado se a tela for pequena) */
+@media (max-width: 600px) {
+  #cabecalho {
+    overflow-x: auto; /* Cria uma barra de rolagem horizontal invisível nos celulares */
+    white-space: nowrap;
+    padding: 12px 16px;
+  }
+  
+  /* Remove o empurrão do menu em telas muito pequenas para tudo caber na linha */
+  .btn-nav.btn-menu {
+    margin-left: 0; 
+  }
+}
+#listaMusicasVisor{
+  margin-top: 50px;
+  padding: 5px;
+}

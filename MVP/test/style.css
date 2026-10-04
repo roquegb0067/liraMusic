@@ -1,3 +1,164 @@
+.custom-player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 65px; /* Mais fino para não ocupar espaço */
+  background-color: #121212;
+  border-top: 1px solid #222;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-sizing: border-box;
+}
+
+/* Info esquerda compactada */
+.player-info-container {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  min-width: 150px;
+}
+.linha-topo-info {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaço entre o nome e o coração */
+}
+.player-titulo {
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.player-artista {
+  color: #a7a7a7;
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+/* Botão Curtir */
+.btn-like {
+  background: none;
+  border: none;
+  color: #a7a7a7;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+.btn-like:hover {
+  color: #fff;
+  transform: scale(1.1);
+}
+.btn-like.liked {
+  color: #e91e63; /* Rosa/Vermelho quando curtido */
+  fill: #e91e63;
+}
+
+/* Centro: Play e Barra lado a lado */
+.player-centro-compacto {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 50%;
+  max-width: 700px;
+}
+
+/* Botão de Play menor */
+.btn-control {
+  background: #fff;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: #000;
+  transition: transform 0.1s ease;
+}
+.btn-control:hover {
+  transform: scale(1.05);
+}
+
+/* Barra de progresso com Gradiente */
+.progresso-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+}
+.tempo {
+  color: #727272;
+  font-size: 10px;
+  min-width: 28px;
+}
+.barra-bg {
+  flex: 1;
+  height: 4px;
+  background-color: #333;
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+.barra-fill {
+  height: 100%;
+  width: 0%;
+  /* Gradiente moderno que se move junto com o preenchimento */
+  background: linear-gradient(90deg, #8a2be2, #4a00e0, #ff007f);
+  border-radius: 2px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Volume discreto na direita */
+.player-volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 25%;
+  justify-content: flex-end;
+}
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 70px;
+  height: 3px;
+  background: #333;
+  border-radius: 2px;
+  outline: none;
+}
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* Responsivo para telas pequenas */
+@media (max-width: 600px) {
+  .player-volume { display: none; }
+  .player-info-container { width: 35%; }
+  .player-centro-compacto { width: 65%; }
+}
+
+
+/*
+############################################
+MODIFICADO DA PAGINA DOIS A SER IMPLANTADO
+############################################
+*/
 :root {
   --primary-gradient: linear-gradient(135deg, #8a2be2, #4a00e0, #ff007f);
   --bg-dark: #0f0f12;
