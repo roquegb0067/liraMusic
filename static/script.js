@@ -21,7 +21,6 @@ async function carregarMusicas() {
       
       // Usar addEventListener em vez de onclick inline
       card.addEventListener('click', () => {
-        reproduzir(musica.caminho, artista, urlCapa);
         let musicaTocando = musica.id;
         MusicaAtual(musicaTocando);
       });

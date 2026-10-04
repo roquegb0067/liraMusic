@@ -1,6 +1,6 @@
-// ==========================================
+// =========================================
 // SELEÇÃO DE ELEMENTOS DA INTERFACE
-// ==========================================
+// =========================================
 const audio = document.getElementById('meu-audio');
 const dialog = document.getElementById('reprodutorModal');
 const btnAbrirModal = document.getElementById('btn-abrir-modal');
@@ -24,9 +24,9 @@ const capaWrapper = document.getElementById('capa-wrapper');
 const sliderVolume = document.querySelector('.volume-slider');
 const btnsLike = document.querySelectorAll('.btn-like');
 
-// ==========================================
+// =========================================
 // FUNÇÕES UTILITÁRIAS E DE STORAGE
-// ==========================================
+// =========================================
 function formatarTempo(segundos) {
   if (isNaN(segundos) || !isFinite(segundos)) return '0:00';
   const min = Math.floor(segundos / 60);
@@ -48,11 +48,12 @@ function atualizarIcones(estaTocando) {
   iconesPause.forEach(icon => icon.style.display = estaTocando ? 'block' : 'none');
 }
 
-// ==========================================
+// =========================================
 // REPRODUÇÃO E INJEÇÃO DINÂMICA DE DADOS
-// ==========================================
+// =========================================
 let artista = "LiraMusic";
 let urlCapa = '/MVP/static/Screenshot_20261001_233241_Instagram.jpg'
+
 function reproduzir(caminho, artista, urlCapa) {
   if (!caminho) {
     console.error('Caminho da música não fornecido');
@@ -62,23 +63,23 @@ function reproduzir(caminho, artista, urlCapa) {
   // URL para streaming via API
   const urlStream = `http://127.0.0.1:8080/api/musicas/stream?path=${encodeURIComponent(caminho)}`;
   const nomeMusica = extrairNomeMusica(caminho);
-
+  
   // Injeta Título e Artista em ambas as telas (Modal e Player Compacto)
   elemsTitulo.forEach(elem => elem.textContent = nomeMusica);
   elemsArtista.forEach(elem => elem.textContent = artista);
-
+  
   // Injeta a imagem da capa no container do Modal
   if (capaWrapper && urlCapa) {
     capaWrapper.innerHTML = `<img class="capa-art" src="${urlCapa}" alt="Capa do Álbum" />`;
   }
-
+  
   audio.src = urlStream;
   audio.play().catch(err => console.error('Erro ao reproduzir o áudio:', err));
 }
 
-// ==========================================
+// =========================================
 // CONTROLE DE ÁUDIO E SINCRONIZAÇÃO
-// ==========================================
+// =========================================
 btnsPlayPause.forEach(btn => {
   btn.addEventListener('click', (e) => {
     e.stopPropagation(); // Evita abrir o modal ao clicar no Play do rodapé
@@ -98,7 +99,7 @@ audio.addEventListener('pause', () => atualizarIcones(false));
 audio.addEventListener('timeupdate', () => {
   if (!audio.duration) return;
   const porcentagem = (audio.currentTime / audio.duration) * 100;
-
+  
   barrasFill.forEach(fill => fill.style.width = `${porcentagem}%`);
   temposAtuais.forEach(tempo => tempo.textContent = formatarTempo(audio.currentTime));
 });
@@ -135,9 +136,9 @@ btnsLike.forEach(btn => {
   });
 });
 
-// ==========================================
+// =========================================
 // GESTO DE ARRASTAR (SWIPE UP) NO RODAPÉ
-// ==========================================
+// =========================================
 let startY = 0;
 let currentY = 0;
 let isDragging = false;
@@ -149,18 +150,18 @@ if (playerFixo) {
     currentY = startY;
     isDragging = true;
   }, { passive: true });
-
+  
   playerFixo.addEventListener('touchmove', (e) => {
     if (!isDragging) return;
     currentY = e.touches[0].clientY;
   }, { passive: true });
-
+  
   playerFixo.addEventListener('touchend', () => {
     if (!isDragging) return;
     if (startY - currentY > 50) abrirModal();
     isDragging = false;
   });
-
+  
   // Mouse (Desktop)
   playerFixo.addEventListener('mousedown', (e) => {
     if (e.target.closest('button') || e.target.closest('input')) return;
@@ -181,9 +182,9 @@ window.addEventListener('mouseup', () => {
   isDragging = false;
 });
 
-// ==========================================
+// =========================================
 // CONTROLE DO MODAL DIALOG
-// ==========================================
+// =========================================
 function abrirModal() {
   if (dialog && !dialog.open) {
     dialog.showModal();
@@ -223,6 +224,7 @@ let indiceAtual = 0;
 
 function MusicaAtual(musicaTocando) {
   indiceAtual = musicaTocando;
+  atualizarMusica();
 }
 // 3. Função para tocar/exibir a música atual
 function atualizarMusica() {
@@ -253,5 +255,25 @@ function musicaAnterior() {
 }
 // Detecta quando a música atual termina
 audio.addEventListener('ended', () => {
+  if (modoAleatorio) {
+    Aleatorio()
+  } else {
     musicaAnterior();
+  }
 });
+let modoAleatorio = false;
+
+function Aleatorio() {
+  let novoIndice;
+  // Sorteia um novo índice até que ele seja diferente do índice da música que acabou de tocar
+  do {
+    novoIndice = Math.floor(Math.random() * playlist.length);
+  } while (novoIndice === indiceAtual);
+  console.log(novoIndice);
+  indiceAtual = novoIndice;
+  modoAleatorio = true;
+  atualizarMusica();
+}
+function repetir() {
+  modoAleatorio = false;
+}
