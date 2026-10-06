@@ -26,6 +26,7 @@ async fn main() -> Result<()> {
 
     if sincronizar {
         println!("Sincronizando novas músicas da pasta...");
+        //Atualizar os repositórios de músicas
         let pasta_musicas = "/data/data/com.termux/files/home/storage/shared/snaptube/download/SnapTube Audio";
         let musicas_encontradas = buscar_musicas(pasta_musicas);
         println!("Encontradas {} músicas no disco.", musicas_encontradas.len());
