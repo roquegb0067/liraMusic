@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>liraMusic - Gerenciar Playlists</title>
+  <link rel="stylesheet" href="/static/playlists/playlists.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Coluna Esquerda: Criar e Listar Playlists -->
+    <aside class="sidebar">
+      <h1>Playlists</h1>
+      
+      <!-- Formulário para criar nova playlist -->
+      <div class="form-group">
+        <input type="text" id="nomeNovaPlaylist" placeholder="Nome da nova playlist..." class="inputTexto">
+        <button id="btnCriarPlaylist" class="playlistBtn" type="button">Criar Playlist <span>+</span></button>
+      </div>
+
+      <hr style="border-color: #222; margin: 15px 0;">
+
+      <div id="listaPlaylistsContainer">
+        <!-- Playlists carregadas via JS -->
+      </div>
+    </aside>
+
+    <!-- Coluna Direita: Gerenciar Músicas da Playlist Selecionada -->
+    <main class="main-content">
+      <h2 id="tituloPainelPlaylist">Selecione uma playlist ao lado</h2>
+      
+      <div class="painel-gerenciamento" id="painelGerenciamento" style="display: none;">
+        
+        <!-- Seção 1: Músicas que já estão na playlist -->
+        <div class="secao-musicas">
+          <h3>Músicas nesta Playlist</h3>
+          <div id="musicasNaPlaylistVisor" class="grid-musicas">
+            <!-- Músicas da playlist aparecem aqui -->
+          </div>
+        </div>
+
+        <hr style="border-color: #222; margin: 30px 0;">
+
+        <!-- Seção 2: Adicionar músicas disponíveis do sistema -->
+        <div class="secao-musicas">
+          <h3>Adicionar Músicas Disponíveis</h3>
+          <div id="musicasGeraisVisor" class="grid-musicas">
+            <!-- Todas as músicas do backend aparecem aqui para serem adicionadas -->
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="gerenciar.js"></script>
+</body>
+</html>

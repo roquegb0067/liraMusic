@@ -1,27 +1,121 @@
-body {
-  background: black;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.playlistBtn {
-  color: white;
-  background: black;
-  border: none;
-  width: 80%;
-  height: 50px;
-  box-shadow: 0px 0px 10px 0px;
-  margin-top: 10px;
-  border-radius: 10px;
-  font-size: 17px;
-  font-weight: 200;
+body {
+  background: #0a0a0c;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar de Playlists */
+.sidebar {
+  width: 280px;
+  background: #111115;
+  padding: 20px;
+  border-right: 1px solid rgba(230, 0, 240, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 h1 {
   color: white;
   font-weight: 300;
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.playlistBtn {
+  color: white;
+  background: #18181f;
+  border: 1px solid #333;
+  width: 100%;
+  height: 50px;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.5);
+  margin-top: 8px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 300;
+  cursor: pointer;
+  text-align: left;
+  padding: 0 15px;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.playlistBtn:hover, .playlistBtn.ativa {
+  border-color: #E600F0;
+  box-shadow: 0px 0px 12px rgba(230, 0, 240, 0.4);
+  background: #201a28;
 }
 
 .playlistBtn span {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #E600F0;
+}
+
+/* Conteúdo Principal / Cards */
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+
+h2 {
+  font-weight: 400;
+  margin-bottom: 20px;
+  color: #e0e0e0;
+}
+
+.grid-musicas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.cardMusica {
+  background: #16161c;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 15px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cardMusica:hover {
+  transform: translateY(-4px);
+  box-shadow: 0px 4px 15px rgba(230, 0, 240, 0.3);
+  border-color: rgba(230, 0, 240, 0.5);
+}
+
+.titulorespostaPlaylist {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  word-break: break-word;
+}
+
+.subtituloMusica {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.mensagem-inicial {
+  color: #666;
+  grid-column: 1 / -1;
 }

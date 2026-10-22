@@ -1,0 +1,84 @@
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputTexto {
+  width: 100%;
+  height: 45px;
+  background: #16161c;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 0 15px;
+  color: white;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.inputTexto:focus {
+  border-color: #E600F0;
+}
+
+.painel-gerenciamento {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.secao-musicas h3 {
+  font-size: 16px;
+  color: #aaa;
+  margin-bottom: 12px;
+  font-weight: 400;
+}
+
+/* Estilo para botões de ação dentro dos cards (Adicionar / Remover) */
+.cardAcao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #16161c;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  transition: all 0.2s;
+}
+
+.cardAcao:hover {
+  border-color: rgba(230, 0, 240, 0.4);
+}
+
+.btnAcaoAdd {
+  background: #E600F0;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: opacity 0.2s;
+}
+
+.btnAcaoAdd:hover {
+  opacity: 0.8;
+}
+
+.btnAcaoRemover {
+  background: #ff3333;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: opacity 0.2s;
+}
+
+.btnAcaoRemover:hover {
+  opacity: 0.8;
+}

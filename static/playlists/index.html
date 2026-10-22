@@ -1,23 +1,31 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>liraMusic - Playlists</title>
   <link rel="stylesheet" href="playlists.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Playlists</title>
 </head>
-
 <body>
-  <div id="visorPlaylists">
-    <h1>Playlists</h1>
-  <button class="playlistBtn" type="submit">
-  <span>+</span> Nova Playlist</button>
-    <button class="playlistBtn" type="button">Curtidos</button>
-    <button class="playlistBtn" type="button">Favoritos</button>
-  </div>
-  
-  <script src="playlists.js" type="text/javascript" charset="utf-8"></script>
-</body>
 
+  <div class="app-container">
+    <!-- Seção de Seleção de Playlists -->
+    <aside class="sidebar">
+      <h1>Sua Biblioteca</h1>
+      <div id="listaPlaylistsContainer">
+        <!-- Botões das playlists serão inseridos dinamicamente aqui -->
+      </div>
+    </aside>
+
+    <!-- Seção de Exibição das Músicas da Playlist Selecionada -->
+    <main class="main-content">
+      <h2 id="tituloPlaylistAtual">Selecione uma playlist</h2>
+      <div id="visorPlaylists" class="grid-musicas">
+        <p class="mensagem-inicial">Escolha uma playlist para ver as músicas.</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="playlists.js"></script>
+</body>
 </html>
