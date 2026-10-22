@@ -1,0 +1,27 @@
+body {
+  background: black;
+}
+
+.playlistBtn {
+  color: white;
+  background: black;
+  border: none;
+  width: 80%;
+  height: 50px;
+  box-shadow: 0px 0px 10px 0px;
+  margin-top: 10px;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 200;
+}
+
+h1 {
+  color: white;
+  font-weight: 300;
+}
+
+.playlistBtn span {
+  font-size: 20px;
+  font-weight: 600;
+  color: #E600F0;
+}
