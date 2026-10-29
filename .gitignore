@@ -32,3 +32,9 @@ package-lock.json
 .claude/skils
 .agents/skills/vercel-connect
 .env.local
+config.js
+config.txt
+skills-lock.json
+package.json
+package-lock.json
+
