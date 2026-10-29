@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LiraMusic Player</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/static/modal_player/script.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/static/script.js" type="text/javascript" charset="utf-8"></script>
+  <!-- Phosphor Icons para ícones modernos do app -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Font Family Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    
+    body {
+      background: #090714;
+      color: #f3f4f6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Scrollbar estilizada */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 12, 29, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 255, 213, 0.3);
+      border-radius: 4px;
+    }
+
+    /* Glassmorphism Classes */
+    .glass-card {
+      background: rgba(23, 18, 41, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .glass-nav {
+      background: rgba(15, 12, 29, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Neon Glows & Gradients */
+    .neon-text-cyan {
+      color: #00ffd5;
+      text-shadow: 0 0 10px rgba(0, 255, 213, 0.5);
+    }
+
+    .neon-glow-btn {
+      background: linear-gradient(135deg, #7928ca 0%, #ff0080 100%);
+      box-shadow: 0 0 20px rgba(255, 0, 128, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .neon-glow-btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 0 30px rgba(255, 0, 128, 0.7);
+    }
+
+    /* Botão Liked */
+    .btn-like.liked {
+      color: #ff007f !important;
+      text-shadow: 0 0 10px rgba(255, 0, 127, 0.8);
+      transform: scale(1.1);
+    }
+
+    /* Modal / Dialog Styling */
+    dialog#reprodutorModal {
+      padding: 0;
+      background: transparent;
+      max-width: 100vw;
+      max-height: 100vh;
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+    }
+
+    dialog#reprodutorModal::backdrop {
+      background: rgba(5, 3, 12, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    /* Visualizer & Dynamic Pulsing Circle */
+    #visualizer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      height: 60px;
+      width: 100%;
+    }
+
+    .bar {
+      flex: 1;
+      height: 100%;
+      background: linear-gradient(180deg, #00ffd5 0%, #7928ca 50%, #ff0080 100%);
+      border-radius: 4px;
+      transform-origin: bottom;
+      transform: scaleY(0.05);
+      transition: transform 0.08s ease;
+    }
+
+    #circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,255,213,0.2) 0%, rgba(121,40,202,0.4) 60%, rgba(255,0,128,0.2) 100%);
+      border: 2px solid rgba(0, 255, 213, 0.6);
+      transition: transform 0.05s ease, box-shadow 0.05s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Estilo dos Cards de Música Gerados */
+    .cardMusica {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .cardMusica:active {
+      transform: scale(0.98);
+      background: rgba(0, 255, 213, 0.1);
+      border-color: rgba(0, 255, 213, 0.3);
+    }
+
+    .cardMusica .tituloMusica {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #e5e7eb;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Capa de Música */
+    .capa-art {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    }
+
+    /* Estilização da barra de range/volume */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      height: 6px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: #00ffd5;
+      box-shadow: 0 0 10px #00ffd5;
+      cursor: pointer;
+    }
+
+    /* Animação do Indicador Ativo do Cabeçalho */
+    .btn-nav.ativo {
+      color: #00ffd5 !important;
+      border-bottom: 2px solid #00ffd5;
+      text-shadow: 0 0 8px rgba(0, 255, 213, 0.6);
+    }
+  </style>
+</head>
+<body class="pb-28">
+
+  <!-- Elemento de Áudio Oculto (Utilizado pelo JS) -->
+  <audio id="meu-audio" crossorigin="anonymous"></audio>
+
+  <!-- APP CONTAINER / TELA PRINCIPAL -->
+  <div class="max-w-md mx-auto min-h-screen relative flex flex-col justify-between">
+    
+    <!-- CABEÇALHO -->
+    <header id="cabecalho" class="sticky top-0 z-30 glass-nav px-5 pt-10 pb-3 flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-pink-500/30">
+            <i class="ph-bold ph-music-notes text-xl text-white"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-extrabold tracking-wide bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">LiraMusic</h1>
+            <p class="text-xs text-cyan-400 font-medium">Pro APK Tester</p>
+          </div>
+        </div>
+        <button class="w-9 h-9 rounded-full glass-card flex items-center justify-center text-gray-300">
+          <i class="ph-bold ph-bell text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Navegação de Abas -->
+      <nav class="flex items-center gap-6 pt-2 text-sm font-semibold text-gray-400 border-b border-white/5">
+        <button class="btn-nav ativo pb-2 transition-all">Sua Biblioteca</button>
+        <button class="btn-nav pb-2 transition-all">Explorar</button>
+        <button class="btn-nav pb-2 transition-all">Em Alta</button>
+      </nav>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL / VISOR DE MÚSICAS -->
+    <main class="px-5 pt-5 flex-1">
+      
+      <!-- Card Banner Promocional / Status do Player -->
+      <div class="glass-card rounded-2xl p-5 mb-6 relative overflow-hidden border border-cyan-500/20">
+        <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-cyan-500/10 rounded-full blur-2xl"></div>
+        <div class="absolute -left-6 -top-6 w-28 h-28 bg-pink-500/10 rounded-full blur-2xl"></div>
+        
+        <span class="text-[10px] font-bold uppercase tracking-widest bg-cyan-500/20 text-cyan-300 px-2.5 py-1 rounded-full border border-cyan-500/30">Modo APK Móvel</span>
+        <h2 class="text-lg font-bold mt-2 text-white">Sua Playlist Local</h2>
+        <p class="text-xs text-gray-400 mt-1">Toque numa faixa abaixo para iniciar a reprodução sincronizada.</p>
+      </div>
+
+      <div class="flex items-center justify-between mb-3 px-1">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400">Músicas Disponíveis</h3>
+        <span class="text-xs text-cyan-400 font-medium" id="total-musicas-tag">Carregando...</span>
+      </div>
+
+      <!-- VISOR DINÂMICO DE MÚSICAS (ONDE O JS INJETA OS CARDS) -->
+      <div id="listaMusicasVisor" class="space-y-2 pb-6">
+        <div class="text-center py-10">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cyan-400 mb-2"></div>
+          <p class="text-xs text-gray-400">Buscando faixas no servidor...</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- ========================================= -->
+    <!-- PLAYER FIXO COMPACTO NO RODAPÉ -->
+    <!-- ========================================= -->
+    <div class="custom-player fixed bottom-3 left-3 right-3 max-w-md mx-auto z-40">
+      <div id="btn-abrir-modal" class="glass-card rounded-2xl p-3 flex flex-col gap-2 cursor-pointer border border-white/10 shadow-2xl relative overflow-hidden">
+        
+        <!-- Barra de Progresso Interativa (Mini) -->
+        <div class="barra-interativa w-full h-1 bg-white/10 rounded-full overflow-hidden cursor-pointer relative">
+          <div class="barra-fill h-full bg-gradient-to-r from-cyan-400 to-pink-500 w-0"></div>
+        </div>
+
+        <div class="flex items-center justify-between px-1">
+          <div class="flex items-center gap-3 overflow-hidden">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-800 flex-shrink-0 flex items-center justify-center overflow-hidden border border-white/10 shadow-inner">
+              <i class="ph-bold ph-disc text-xl text-cyan-300 animate-spin" style="animation-duration: 8s;"></i>
+            </div>
+            <div class="truncate">
+              <h4 class="player-titulo text-sm font-bold text-white truncate">Selecione uma música</h4>
+              <p class="player-artista text-xs text-gray-400 truncate">LiraMusic</p>
+            </div>
+          </div>
+
+          <!-- Controles Rápidos do Rodapé -->
+          <div class="flex items-center gap-2">
+            <button class="btn-like text-gray-400 hover:text-pink-500 p-2 text-xl transition-transform active:scale-90">
+              <i class="ph-fill ph-heart"></i>
+            </button>
+            <button id="btn-play-pause" class="main-play w-10 h-10 rounded-full neon-glow-btn flex items-center justify-center text-white text-lg">
+              <i class="ph-fill ph-play icone-play"></i>
+              <i class="ph-fill ph-pause icone-pause hidden"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- MODAL DIALOG COMPLETO DA MÚSICA -->
+    <!-- ========================================= -->
+    <dialog id="reprodutorModal">
+      <div class="w-full h-full flex flex-col justify-between p-6 bg-gradient-to-b from-[#150d2a] via-[#0b0716] to-[#05030c] text-white overflow-y-auto">
+        
+        <!-- Header do Modal -->
+        <div class="flex items-center justify-between pt-4">
+          <button id="btn-fechar-modal" class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-gray-300 active:scale-95">
+            <i class="ph-bold ph-caret-down text-xl"></i>
+          </button>
+          <div class="text-center">
+            <span class="text-[10px] uppercase font-bold tracking-widest text-cyan-400">TOCANDO AGORA</span>
+            <p class="text-xs text-gray-400">LiraMusic Player VIP</p>
+          </div>
+          <button class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-gray-300">
+            <i class="ph-bold ph-dots-three-vertical text-xl"></i>
+          </button>
+        </div>
+
+        <!-- Capa do Álbum com Animação Central e Visualizer de Círculo -->
+        <div class="my-auto flex flex-col items-center justify-center gap-6 py-4">
+          <div class="relative flex items-center justify-center">
+            
+            <!-- Círculo Reativo Neon (JS Interage aqui via #circle) -->
+            <div id="circle" class="absolute"></div>
+
+            <!-- Wrapper da Capa do Álbum (#capa-wrapper) -->
+            <div id="capa-wrapper" class="w-64 h-64 relative z-10 rounded-3xl overflow-hidden glass-card p-1">
+              <div class="w-full h-full rounded-2xl bg-gradient-to-tr from-purple-900 via-indigo-950 to-pink-900 flex flex-col items-center justify-center text-gray-500 gap-2">
+                <i class="ph-bold ph-music-note text-5xl text-cyan-400/50"></i>
+                <span class="text-xs text-gray-400 font-medium">Sem capa carregada</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Equalizador / Visualizer Dinâmico (#visualizer) -->
+          <div id="visualizer" class="px-4"></div>
+        </div>
+
+        <!-- Informações e Ações da Faixa -->
+        <div class="space-y-6 pb-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="player-titulo text-xl font-extrabold text-white tracking-wide">Nome da Música</h2>
+              <p class="player-artista text-sm font-medium text-cyan-400 mt-0.5">Artista</p>
+            </div>
+            <button class="btn-like text-2xl text-gray-400 hover:text-pink-500 transition-all">
+              <i class="ph-fill ph-heart"></i>
+            </button>
+          </div>
+
+          <!-- Barra de Progresso Interativa Completa -->
+          <div class="space-y-2">
+            <div class="barra-interativa w-full h-2 bg-white/10 rounded-full overflow-hidden cursor-pointer relative">
+              <div class="barra-fill h-full bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 w-0"></div>
+            </div>
+            <div class="flex justify-between text-xs font-semibold text-gray-400">
+              <span class="tempo-atual">0:00</span>
+              <span class="tempo-total">0:00</span>
+            </div>
+          </div>
+
+          <!-- Botões Principais de Controle do Player -->
+          <div class="flex items-center justify-between px-2">
+            <button onclick="Aleatorio()" class="text-gray-400 hover:text-cyan-400 text-xl transition-colors">
+              <i class="ph-bold ph-shuffle"></i>
+            </button>
+            <button onclick="musicaAnterior()" class="text-white hover:text-cyan-400 text-3xl transition-transform active:scale-90">
+              <i class="ph-fill ph-skip-back"></i>
+            </button>
+            <button class="main-play w-16 h-16 rounded-full neon-glow-btn flex items-center justify-center text-white text-2xl">
+              <i class="ph-fill ph-play icone-play"></i>
+              <i class="ph-fill ph-pause icone-pause hidden"></i>
+            </button>
+            <button onclick="proximaMusica()" class="text-white hover:text-cyan-400 text-3xl transition-transform active:scale-90">
+              <i class="ph-fill ph-skip-forward"></i>
+            </button>
+            <button onclick="repetir()" class="text-gray-400 hover:text-cyan-400 text-xl transition-colors">
+              <i class="ph-bold ph-repeat"></i>
+            </button>
+          </div>
+
+          <!-- Controle de Volume -->
+          <div class="flex items-center gap-3 glass-card px-4 py-2.5 rounded-2xl">
+            <i class="ph-bold ph-speaker-low text-gray-400 text-lg"></i>
+            <input type="range" class="volume-slider w-full cursor-pointer accent-cyan-400" min="0" max="1" step="0.01" value="1">
+            <i class="ph-bold ph-speaker-high text-cyan-400 text-lg"></i>
+          </div>
+        </div>
+
+      </div>
+    </dialog>
+
+  </div>
+
+  <!-- ========================================= -->
+  <!-- MOCK AUTOMÁTICO PARA TESTES OFF-SERVER -->
+  <!-- ========================================= -->
+  <script>
+    // Script de fallback leve para permitir testar a interface do APK
+    // mesmo se o servidor backend http://127.0.0.1:8080/api/musicas não estiver ligado.
+    window.addEventListener('DOMContentLoaded', () => {
+      const origFetch = window.fetch;
+      window.fetch = async function(...args) {
+        try {
+          const response = await origFetch.apply(this, args);
+          if(!response.ok) throw new Error("Server Offline");
+          return response;
+        } catch (err) {
+          if (typeof args[0] === 'string' && args[0].includes('/api/musicas')) {
+            console.warn("Servidor local desligado. Injetando músicas mockadas para teste no APK.");
+            const mockMusicas = [
+              { id: 1, caminho: "/musicas/Cyberpunk_Vibes.mp3" },
+              { id: 2, caminho: "/musicas/Neon_Dreams_Lira.mp3" },
+              { id: 3, caminho: "/musicas/Synthwave_Night.mp3" }
+            ];
+            return new Response(JSON.stringify(mockMusicas), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' }
+            });
+          }
+          throw err;
+        }
+      };
+    });
+  </script>
+
+  <!-- ========================================= -->
+  <!-- CÓDIGO JAVASCRIPT INTACTO DO USUÁRIO -->
+  <!-- ========================================= -->
+  <script>
+// =========================================
+// SELEÇÃO DE ELEMENTOS DA INTERFACE
+// =========================================
+const audio = document.getElementById('meu-audio');
+const dialog = document.getElementById('reprodutorModal');
+const btnAbrirModal = document.getElementById('btn-abrir-modal');
+const btnFecharModal = document.getElementById('btn-fechar-modal');
+const playerFixo = document.querySelector('.custom-player');
+
+// Múltiplos elementos (Modal + Player Fixo Rodapé)
+const btnsPlayPause = document.querySelectorAll('.main-play, #btn-play-pause');
+const iconesPlay = document.querySelectorAll('.icone-play');
+const iconesPause = document.querySelectorAll('.icone-pause');
+
+const barrasBg = document.querySelectorAll('.barra-interativa');
+const barrasFill = document.querySelectorAll('.barra-fill');
+const temposAtuais = document.querySelectorAll('.tempo-atual');
+const temposTotais = document.querySelectorAll('.tempo-total');
+
+const elemsTitulo = document.querySelectorAll('.player-titulo');
+const elemsArtista = document.querySelectorAll('.player-artista');
+const capaWrapper = document.getElementById('capa-wrapper');
+
+const sliderVolume = document.querySelector('.volume-slider');
+const btnsLike = document.querySelectorAll('.btn-like');
+
+// =========================================
+// FUNÇÕES UTILITÁRIAS E DE STORAGE
+// =========================================
+
+
+// Controle de Volume
+if (sliderVolume) {
+  sliderVolume.addEventListener('input', (e) => {
+    audio.volume = e.target.value;
+  });
+}
+
+// Botões Curtir (Sincroniza o estado em ambos os players)
+btnsLike.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const jaCurtido = btn.classList.contains('liked');
+    btnsLike.forEach(b => b.classList.toggle('liked', !jaCurtido));
+  });
+});
+
+// =========================================
+// GESTO DE ARRASTAR (SWIPE UP) NO RODAPÉ
+// =========================================
+let startY = 0;
+let currentY = 0;
+let isDragging = false;
+
+if (playerFixo) {
+  // Touch (Dispositivos Móveis)
+  playerFixo.addEventListener('touchstart', (e) => {
+    startY = e.touches[0].clientY;
+    currentY = startY;
+    isDragging = true;
+  }, { passive: true });
+  
+  playerFixo.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    currentY = e.touches[0].clientY;
+  }, { passive: true });
+  
+  playerFixo.addEventListener('touchend', () => {
+    if (!isDragging) return;
+    if (startY - currentY > 50) abrirModal();
+    isDragging = false;
+  });
+  
+  // Mouse (Desktop)
+  playerFixo.addEventListener('mousedown', (e) => {
+    if (e.target.closest('button') || e.target.closest('input')) return;
+    startY = e.clientY;
+    currentY = startY;
+    isDragging = true;
+  });
+}
+
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  currentY = e.clientY;
+});
+
+window.addEventListener('mouseup', () => {
+  if (!isDragging) return;
+  if (startY - currentY > 50) abrirModal();
+  isDragging = false;
+});
+
+// =========================================
+// CONTROLE DO MODAL DIALOG
+// =========================================
+function abrirModal() {
+  if (dialog && !dialog.open) {
+    dialog.showModal();
+  }
+}
+
+function fecharModal() {
+  if (dialog && dialog.open) {
+    dialog.close();
+  }
+}
+
+if (btnAbrirModal) btnAbrirModal.addEventListener('click', abrirModal);
+if (btnFecharModal) btnFecharModal.addEventListener('click', fecharModal);
+
+if (dialog) {
+  dialog.addEventListener('click', (e) => {
+    const rect = dialog.getBoundingClientRect();
+    const isInDialog = (
+      rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+      rect.left <= e.clientX && e.clientX <= rect.left + rect.width
+    );
+    if (!isInDialog) fecharModal();
+  });
+}
+
+/*
+AVANÇAR E RETORNAR MÚSICA
+*/
+
+/*
+parte animação
+*/
+const visualizer = document.getElementById('visualizer');
+const circle = document.getElementById('circle');
+
+const totalBars = 64; 
+const bars = [];
+
+// Criar barras dinamicamente no DOM
+for (let i = 0; i < totalBars; i++) {
+    const bar = document.createElement('div');
+    bar.classList.add('bar');
+    visualizer.appendChild(bar);
+    bars.push(bar);
+}
+
+let audioCtx, analyser, dataArray;
+
+audio.addEventListener('play', () => {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaElementSource(audio);
+        
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = totalBars * 2; 
+
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+    }
+
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    
+    animate();
+});
+
+function animate() {
+    if (audio.paused) {
+        bars.forEach(bar => bar.style.transform = 'scaleY(0.05)');
+        if (circle) circle.style.transform = 'scale(1)';
+        return;
+    }
+
+    analyser.getByteFrequencyData(dataArray);
+
+    const centerIndex = (totalBars - 1) / 2;
+
+    // 1. Atualizar barras (Graves concentrados no centro)
+    for (let i = 0; i < totalBars; i++) {
+        const distanceFromCenter = Math.abs(i - centerIndex);
+        const freqIndex = Math.floor(distanceFromCenter);
+        const frequencyValue = dataArray[freqIndex] || 0;
+        
+        const scaleY = Math.max(0.05, frequencyValue / 255);
+        bars[i].style.transform = `scaleY(${scaleY})`;
+    }
+
+    // 2. Interatividade do Círculo (Pulsação com base nas frequências graves)
+    let bassSum = 0;
+    const bassBinCount = 8; // Analisa os primeiros 8 canais de frequência (graves)
+    for (let i = 0; i < bassBinCount; i++) {
+        bassSum += dataArray[i];
+    }
+    const bassAvg = bassSum / bassBinCount;
+
+    // Calcula dynamic scale (de 1.0x até 1.45x) e a intensidade da luz neon
+    const circleScale = 1 + (bassAvg / 255) * 0.45;
+    const glowRadius = 20 + (bassAvg / 255) * 60;
+    
+    circle.style.transform = `scale(${circleScale})`;
+    circle.style.boxShadow = `0 0 ${glowRadius}px rgba(0, 255, 213, 0.8), 0 0 ${glowRadius * 1.5}px rgba(255, 0, 200, 0.6)`;
+
+    requestAnimationFrame(animate);
+}
+
+  </script>
+</body>
+</html>
