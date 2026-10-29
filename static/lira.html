@@ -6,8 +6,6 @@
   <title>LiraMusic Player</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/static/modal_player/script.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/static/script.js" type="text/javascript" charset="utf-8"></script>
   <!-- Phosphor Icons para ícones modernos do app -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <!-- Font Family Inter -->
@@ -450,7 +448,105 @@ const btnsLike = document.querySelectorAll('.btn-like');
 // =========================================
 // FUNÇÕES UTILITÁRIAS E DE STORAGE
 // =========================================
+function formatarTempo(segundos) {
+  if (isNaN(segundos) || !isFinite(segundos)) return '0:00';
+  const min = Math.floor(segundos / 60);
+  const seg = Math.floor(segundos % 60);
+  return `${min}:${seg < 10 ? '0' : ''}${seg}`;
+}
 
+function extrairNomeMusica(caminho) {
+  return caminho.split('/').pop().replace(/\.[^/.]+$/, "");
+}
+
+function obterMusicasDoStorage() {
+  const dados = localStorage.getItem('minhas_musicas');
+  return dados ? JSON.parse(dados) : [];
+}
+
+function atualizarIcones(estaTocando) {
+  iconesPlay.forEach(icon => icon.style.display = estaTocando ? 'none' : 'block');
+  iconesPause.forEach(icon => icon.style.display = estaTocando ? 'block' : 'none');
+}
+
+// =========================================
+// REPRODUÇÃO E INJEÇÃO DINÂMICA DE DADOS
+// =========================================
+let artista = "LiraMusic";
+let urlCapa = '/MVP/static/Screenshot_20261001_233241_Instagram.jpg'
+
+async function reproduzir(caminho, artista, urlCapa) {
+  if (!caminho) {
+    console.error('Caminho da música não fornecido');
+    return;
+  }
+  
+  // URL para streaming via API
+  const urlStream = `http://127.0.0.1:8080/api/musicas/stream?path=${encodeURIComponent(caminho)}`;
+  const nomeMusica = extrairNomeMusica(caminho);
+  
+  // Injeta Título e Artista em ambas as telas (Modal e Player Compacto)
+  elemsTitulo.forEach(elem => elem.textContent = nomeMusica);
+  elemsArtista.forEach(elem => elem.textContent = artista);
+  
+  // Injeta a imagem da capa no container do Modal
+  if (capaWrapper && urlCapa) {
+    capaWrapper.innerHTML = `<img class="capa-art" src="${urlCapa}" alt="Capa do Álbum" />`;
+  }
+  
+  audio.src = urlStream;
+
+  try {
+    await audio.play();
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      console.error('Erro ao reproduzir o áudio:', err);
+    }
+  }
+}
+
+// =========================================
+// CONTROLE DE ÁUDIO E SINCRONIZAÇÃO
+// =========================================
+btnsPlayPause.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation(); // Evita abrir o modal ao clicar no Play do rodapé
+    if (!audio.src) return;
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  });
+});
+
+audio.addEventListener('play', () => atualizarIcones(true));
+audio.addEventListener('pause', () => atualizarIcones(false));
+
+// Atualiza progresso e tempo decorrido simultaneamente
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  const porcentagem = (audio.currentTime / audio.duration) * 100;
+  
+  barrasFill.forEach(fill => fill.style.width = `${porcentagem}%`);
+  temposAtuais.forEach(tempo => tempo.textContent = formatarTempo(audio.currentTime));
+});
+
+// Duração total ao carregar metadados
+audio.addEventListener('loadedmetadata', () => {
+  temposTotais.forEach(tempo => tempo.textContent = formatarTempo(audio.duration));
+});
+
+// Clique na barra para buscar ponto da música (Seek)
+barrasBg.forEach(barra => {
+  barra.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!audio.duration) return;
+    const rect = barra.getBoundingClientRect();
+    const cliqueX = e.clientX - rect.left;
+    audio.currentTime = (cliqueX / rect.width) * audio.duration;
+  });
+});
 
 // Controle de Volume
 if (sliderVolume) {
@@ -546,6 +642,89 @@ if (dialog) {
 /*
 AVANÇAR E RETORNAR MÚSICA
 */
+const playlist = JSON.parse(localStorage.getItem('minhas_musicas')) || [];
+
+// 2. Variável para controlar a posição atual (começa na primeira música, índice 0)
+//Controle da reprodução pela variável
+//#######№############################
+let indiceAtual = 0;
+
+
+function MusicaAtual(musicaTocando) {
+  // Convertemos para número e subtraímos 1 para alinhar com o array (0-index)
+  indiceAtual = Number(musicaTocando) - 1;
+  atualizarMusica();
+}
+
+// 3. Função para tocar/exibir a música atual
+function atualizarMusica() {
+  const list = JSON.parse(localStorage.getItem('minhas_musicas')) || [];
+  const musicaAtual = list[indiceAtual];
+  if (musicaAtual) {
+    reproduzir(musicaAtual.caminho, artista, urlCapa);
+  }
+}
+
+// 4. Função para ir para a PRÓXIMA (+1)
+function proximaMusica() {
+  const list = JSON.parse(localStorage.getItem('minhas_musicas')) || [];
+  if (!list.length) return;
+  
+  if (!modoAleatorio) {
+    if (indiceAtual < list.length - 1) {
+      indiceAtual++; // Avança um índice
+    } else {
+      indiceAtual = 0; // Se for a última, volta para a primeira (loop)
+    }
+  } else {
+    Aleatorio()
+  }
+  atualizarMusica();
+}
+
+// 5. Função para VOLTAR para a anterior (-1)
+function musicaAnterior() {
+  const list = JSON.parse(localStorage.getItem('minhas_musicas')) || [];
+  if (!list.length) return;
+
+  if (!modoAleatorio) {
+    if (indiceAtual > 0) {
+      indiceAtual--; // Volta um índice
+    } else {
+      indiceAtual = list.length - 1; // Se for a primeira, vai para a última
+    }
+  } else {
+    Aleatorio()
+  }
+  atualizarMusica();
+}
+// Detecta quando a música atual termina
+audio.addEventListener('ended', () => {
+  if (modoAleatorio) {
+    Aleatorio()
+  } else {
+    musicaAnterior();
+  }
+});
+let modoAleatorio = false;
+
+function Aleatorio() {
+  const list = JSON.parse(localStorage.getItem('minhas_musicas')) || [];
+  if (!list.length) return;
+
+  let novoIndice;
+  // Sorteia um novo índice até que ele seja diferente do índice da música que acabou de tocar
+  do {
+    novoIndice = Math.floor(Math.random() * list.length);
+  } while (list.length > 1 && novoIndice === indiceAtual);
+  indiceAtual = novoIndice;
+  modoAleatorio = true;
+  atualizarMusica();
+}
+
+function repetir() {
+  modoAleatorio = false;
+}
 
 /*
 parte animação
@@ -625,7 +804,73 @@ function animate() {
 
     requestAnimationFrame(animate);
 }
+async function carregarMusicas() {
+  try {
+    const resposta = await fetch('http://127.0.0.1:8080/api/musicas');
 
+    if (!resposta.ok) {
+      throw new Error(`Erro no servidor: ${resposta.status}`);
+    }
+
+    const musicas = await resposta.json();
+    salvarMusicasNoStorage(musicas);
+
+    const tagTotal = document.getElementById('total-musicas-tag');
+    if (tagTotal) tagTotal.textContent = `${musicas.length} faixas`;
+
+    const visor = document.getElementById('listaMusicasVisor');
+    visor.innerHTML = "";
+
+    [...musicas].reverse().forEach(musica => {
+      const nomeMusica = musica.caminho.split('/').pop();
+
+      const card = document.createElement('div');
+      card.className = 'cardMusica';
+      card.innerHTML = `
+        <div class="flex items-center gap-3 overflow-hidden">
+          <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+            <i class="ph-bold ph-music-notes-simple"></i>
+          </div>
+          <p class="tituloMusica">${nomeMusica}</p>
+        </div>
+        <i class="ph-bold ph-play-circle text-cyan-400 text-xl"></i>
+      `;
+      
+      // Usar addEventListener em vez de onclick inline
+      card.addEventListener('click', () => {
+        let musicaTocando = musica.id;
+        MusicaAtual(musicaTocando);
+      });
+      
+      visor.appendChild(card);
+    });
+
+  } catch (erro) {
+    console.error("Falha ao buscar músicas:", erro);
+    document.getElementById('listaMusicasVisor').innerHTML = `<p style="color: red;">Erro ao carregar músicas.</p>`;
+  }
+}
+
+carregarMusicas();
+
+function salvarMusicasNoStorage(musicas) {
+  localStorage.setItem('minhas_musicas', JSON.stringify(musicas));
+}
+// Seleciona todos os botões de navegação do cabeçalho
+const botoesNav = document.querySelectorAll('#cabecalho .btn-nav');
+
+botoesNav.forEach(botao => {
+  botao.addEventListener('click', () => {
+    // 1. Procura o botão que está ativo no momento e remove a classe 'ativo' dele
+    const botaoAtivoAtual = document.querySelector('#cabecalho .btn-nav.ativo');
+    if (botaoAtivoAtual) {
+      botaoAtivoAtual.classList.remove('ativo');
+    }
+    
+    // 2. Adiciona a classe 'ativo' (cor branca) apenas no botão que você acabou de clicar
+    botao.classList.add('ativo');
+  });
+});
   </script>
 </body>
 </html>
